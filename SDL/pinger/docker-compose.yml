@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    container_name: secure_database
+    environment:
+      POSTGRES_DB: secure_db_connection
+      POSTGRES_USER: secure_user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  pinger:
+    build: .
+    container_name: database_pinger
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    volumes:
+      - ./logs:/var/log/pinger
+    restart: unless-stopped
+
+volumes:
+  pgdata:
